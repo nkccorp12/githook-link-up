@@ -9,7 +9,84 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      travel_entries: {
+        Row: {
+          accommodation_type: string | null
+          arrival: string | null
+          city: string
+          comments: string | null
+          country: string
+          created_at: string
+          date: string
+          days: number | null
+          departure: string | null
+          end_date: string | null
+          flight_number: string | null
+          id: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accommodation_type?: string | null
+          arrival?: string | null
+          city: string
+          comments?: string | null
+          country: string
+          created_at?: string
+          date: string
+          days?: number | null
+          departure?: string | null
+          end_date?: string | null
+          flight_number?: string | null
+          id?: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accommodation_type?: string | null
+          arrival?: string | null
+          city?: string
+          comments?: string | null
+          country?: string
+          created_at?: string
+          date?: string
+          days?: number | null
+          departure?: string | null
+          end_date?: string | null
+          flight_number?: string | null
+          id?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

@@ -9,6 +9,7 @@ import TravelEntryForm from "./TravelEntryForm";
 import TravelStatistics from "./TravelStatistics";
 import TravelTimeline from "./TravelTimeline";
 import TravelCalendar from "./TravelCalendar";
+import UserProfile from "./UserProfile";
 
 export interface TimelineEntry {
   id: string;
@@ -399,7 +400,12 @@ const TravelTracker = () => {
     <div className="min-h-screen bg-gradient-subtle p-4 md:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-2 relative">
+          {/* User Profile in top right */}
+          <div className="absolute top-0 right-0">
+            <UserProfile />
+          </div>
+          
           <div className="flex items-center justify-center gap-2 text-primary">
             <Plane className="h-8 w-8" />
             <h1 className="text-4xl font-bold bg-gradient-travel bg-clip-text text-transparent">
