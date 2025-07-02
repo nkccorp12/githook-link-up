@@ -230,18 +230,6 @@ const TravelTracker = () => {
       arrival: 'Deutschland',
       comments: 'Montag Rückflug'
     },
-    // Zurück nach Mosbach (Standard bis Jahresende)
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-07'),
-      endDate: new Date('2025-12-31'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      comments: 'Standard-Aufenthalt in Mosbach bis Jahresende',
-      days: 177
-    }
   ]);
   const [showForm, setShowForm] = useState(false);
 
@@ -270,6 +258,30 @@ const TravelTracker = () => {
       case "friend": return "Bei Freunden";
       default: return "Sonstiges";
     }
+  };
+
+  const getCurrentLocation = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Finde den aktuellen Aufenthalt basierend auf heutigem Datum
+    const currentStay = entries.find(entry => {
+      if (entry.type !== 'stay') return false;
+      const entryDate = new Date(entry.date);
+      entryDate.setHours(0, 0, 0, 0);
+      const endDate = entry.endDate ? new Date(entry.endDate) : new Date(entry.date);
+      endDate.setHours(23, 59, 59, 999);
+      
+      return today >= entryDate && today <= endDate;
+    });
+    
+    // Falls kein aktueller Aufenthalt gefunden wird, ist Default Mosbach
+    return currentStay || {
+      country: 'Deutschland',
+      city: 'Mosbach',
+      type: 'stay' as const,
+      accommodationType: 'other' as const
+    };
   };
 
   return (
