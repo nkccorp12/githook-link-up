@@ -333,6 +333,24 @@ const TravelTracker = () => {
     });
   };
 
+  const exportData = () => {
+    const dataStr = JSON.stringify(entries, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `travel-data-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Export erfolgreich",
+      description: "Reise-Daten wurden heruntergeladen.",
+    });
+  };
+
   const getAccommodationBadgeVariant = (type: string) => {
     switch (type) {
       case "airbnb": return "default";
@@ -394,30 +412,8 @@ const TravelTracker = () => {
         {/* Statistics */}
         <TravelStatistics entries={entries} />
 
-        {/* Drag & Drop Zone */}
-        <Card className={`border-2 border-dashed transition-all duration-300 ${
-          isDragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
-        }`}>
-          <CardContent 
-            className="p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-          >
-            <Upload className={`h-12 w-12 mx-auto mb-4 transition-colors ${
-              isDragOver ? 'text-primary' : 'text-muted-foreground'
-            }`} />
-            <p className="text-lg font-medium text-foreground mb-2">
-              JSON-Dateien hier ablegen
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Ziehe JSON-Dateien hierher, um Reise-Einträge zu importieren
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Action Button */}
-        <div className="flex justify-center">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Button 
             onClick={() => setShowForm(true)} 
             size="lg"
@@ -425,6 +421,37 @@ const TravelTracker = () => {
           >
             <Plus className="h-5 w-5 mr-2" />
             Neue Reise hinzufügen
+          </Button>
+          
+          {/* Compact Drag & Drop Zone */}
+          <Card className={`border-2 border-dashed transition-all duration-300 ${
+            isDragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
+          }`}>
+            <CardContent 
+              className="p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors min-w-[280px]"
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <Upload className={`h-6 w-6 mx-auto mb-2 transition-colors ${
+                isDragOver ? 'text-primary' : 'text-muted-foreground'
+              }`} />
+              <p className="text-sm font-medium text-foreground mb-1">
+                JSON-Import
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Dateien hier ablegen
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Button 
+            onClick={exportData}
+            variant="outline"
+            size="lg"
+          >
+            <Upload className="h-5 w-5 mr-2 rotate-180" />
+            Export JSON
           </Button>
         </div>
 
