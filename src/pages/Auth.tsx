@@ -43,14 +43,11 @@ const Auth = () => {
         <div className="text-center space-y-6">
           <div className="flex items-center justify-center">
             <img 
-              src="/lovable-uploads/f0dfdda1-2c10-4a8e-a48f-e61b03503676.png" 
+              src="/lovable-uploads/d2eeef0f-6ddb-4865-8c6e-ebba1f61abd3.png" 
               alt="NHC Corp Logo" 
-              className="h-24 w-auto"
+              className="h-48 w-auto"
             />
           </div>
-          <p className="text-muted-foreground">
-            Melde dich an, um fortzufahren
-          </p>
         </div>
 
         <Card className="shadow-card">
