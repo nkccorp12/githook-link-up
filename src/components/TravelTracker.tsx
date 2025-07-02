@@ -18,7 +18,78 @@ export interface TravelEntry {
 }
 
 const TravelTracker = () => {
-  const [entries, setEntries] = useState<TravelEntry[]>([]);
+  const [entries, setEntries] = useState<TravelEntry[]>([
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-01-01'),
+      endDate: new Date('2025-03-11'),
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      comments: 'Längerer Aufenthalt zu Jahresbeginn',
+      days: 70
+    },
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-04-08'),
+      endDate: new Date('2025-04-10'),
+      country: 'Deutschland',
+      city: 'Frankfurt',
+      accommodationType: 'hotel',
+      comments: 'Ganztägiger Aufenthalt',
+      days: 3
+    },
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-04-10'),
+      endDate: new Date('2025-04-11'),
+      country: 'Deutschland',
+      city: 'Heidelberg',
+      accommodationType: 'hotel',
+      comments: 'Ganztägiger Aufenthalt',
+      days: 2
+    },
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-06-12'),
+      endDate: new Date('2025-06-12'),
+      country: 'Deutschland',
+      city: 'Berlin',
+      accommodationType: 'other',
+      comments: 'Flug DE4087 Frankfurt → Berlin, 14:50-15:55',
+      days: 1
+    },
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-06-15'),
+      endDate: new Date('2025-06-15'),
+      country: 'Deutschland',
+      city: 'Frankfurt',
+      accommodationType: 'other',
+      comments: 'Flug DE4086 Berlin → Frankfurt, 09:00-10:10',
+      days: 1
+    },
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-06-24'),
+      endDate: new Date('2025-06-25'),
+      country: 'Thailand',
+      city: 'Bangkok',
+      accommodationType: 'hotel',
+      comments: 'Hilton Garden Inn Bangkok Silom, Check-in 24.06. 14:00, Check-out 25.06. 12:00',
+      days: 2
+    },
+    {
+      id: crypto.randomUUID(),
+      startDate: new Date('2025-06-25'),
+      endDate: new Date('2025-07-01'),
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      comments: 'Flug BKK → CNX (Thai Vietjet Air VZ132), Rückflug am 01.07',
+      days: 7
+    }
+  ]);
   const [showForm, setShowForm] = useState(false);
 
   const addEntry = (entry: Omit<TravelEntry, "id" | "days">) => {
