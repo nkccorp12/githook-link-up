@@ -31,6 +31,16 @@ const TravelTracker = () => {
     },
     {
       id: crypto.randomUUID(),
+      startDate: new Date('2025-03-12'),
+      endDate: new Date('2025-04-07'),
+      country: 'Deutschland',
+      city: 'Frankfurt',
+      accommodationType: 'friend',
+      comments: 'Aufenthalt nach Thailand-Rückkehr',
+      days: 27
+    },
+    {
+      id: crypto.randomUUID(),
       startDate: new Date('2025-04-08'),
       endDate: new Date('2025-04-10'),
       country: 'Deutschland',
