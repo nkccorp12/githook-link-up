@@ -8,28 +8,30 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Travel-inspired color palette */
-    --background: 210 20% 98%;
-    --foreground: 210 25% 10%;
+    /* Elegant dark theme with bronze and red accents */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 210 25% 10%;
+    --card-foreground: 0 0% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 25% 10%;
+    --popover-foreground: 0 0% 15%;
 
-    /* Travel blues and teals */
-    --primary: 200 90% 45%;
+    /* Dark grays as primary */
+    --primary: 0 0% 20%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 200 80% 65%;
+    --primary-glow: 0 0% 35%;
 
-    --secondary: 210 15% 95%;
-    --secondary-foreground: 210 25% 10%;
+    /* Bronze tones */
+    --secondary: 30 25% 85%;
+    --secondary-foreground: 0 0% 15%;
 
-    --muted: 210 15% 95%;
-    --muted-foreground: 210 15% 45%;
+    --muted: 30 15% 92%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 180 70% 50%;
+    /* Red accent */
+    --accent: 0 70% 50%;
     --accent-foreground: 0 0% 100%;
 
     --success: 150 60% 45%;
