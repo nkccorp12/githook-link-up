@@ -37,7 +37,7 @@ const getAccommodationLabel = (type?: string) => {
 };
 
 const TravelTimeline: React.FC<TravelTimelineProps> = ({ entries, onDeleteEntry }) => {
-  const sortedEntries = [...entries].sort((a, b) => a.date.getTime() - b.date.getTime());
+  const sortedEntries = [...entries].sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return (
     <div className="space-y-4">

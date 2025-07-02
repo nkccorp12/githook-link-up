@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, MapPin, Calendar, Plane, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TravelEntryForm from "./TravelEntryForm";
 import TravelStatistics from "./TravelStatistics";
 import TravelTimeline from "./TravelTimeline";
+import TravelCalendar from "./TravelCalendar";
 
 export interface TimelineEntry {
   id: string;
@@ -463,8 +465,19 @@ const TravelTracker = () => {
           />
         )}
 
-        {/* Timeline */}
-        <TravelTimeline entries={entries} onDeleteEntry={deleteEntry} />
+        {/* Tabs for Timeline and Calendar */}
+        <Tabs defaultValue="timeline" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
+            <TabsTrigger value="timeline">Timeline</TabsTrigger>
+            <TabsTrigger value="calendar">Kalender</TabsTrigger>
+          </TabsList>
+          <TabsContent value="timeline">
+            <TravelTimeline entries={entries} onDeleteEntry={deleteEntry} />
+          </TabsContent>
+          <TabsContent value="calendar">
+            <TravelCalendar entries={entries} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
