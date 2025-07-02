@@ -384,7 +384,7 @@ const TravelTracker = () => {
           <div className="flex items-center justify-center gap-2 text-primary pr-12 md:pr-0">
             <Plane className="h-6 w-6 md:h-8 md:w-8" />
             <h1 className="text-2xl md:text-4xl font-bold bg-gradient-travel bg-clip-text text-transparent">
-              Travel Tracker
+              Aufenthaltsnachweis
             </h1>
           </div>
           <p className="text-muted-foreground text-sm md:text-lg px-4">
