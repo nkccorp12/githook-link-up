@@ -378,7 +378,9 @@ const TravelTracker = () => {
         <div className="text-center space-y-2 relative">
           {/* Settings Button in top right - with proper mobile spacing */}
           <div className="absolute -top-2 right-0 md:top-0">
-            <SettingsButton entries={entries} />
+            <div className="scale-75 md:scale-90">
+              <SettingsButton entries={entries} />
+            </div>
           </div>
           
           <div className="flex items-center justify-center gap-2 text-primary pr-12 md:pr-0">
@@ -401,10 +403,10 @@ const TravelTracker = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
-                size="lg"
-                className="bg-gradient-travel hover:shadow-travel transition-all duration-300"
+                size="default"
+                className="bg-gradient-travel hover:shadow-travel transition-all duration-300 px-6"
               >
-                <Plus className="h-5 w-5 mr-2" />
+                <Plus className="h-4 w-4 mr-2" />
                 Neue Reise hinzufügen
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>

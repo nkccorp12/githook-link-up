@@ -134,22 +134,22 @@ const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
             <div className="space-y-4">
               {sortedCountries.map(([country, days]) => (
                 <div key={country} className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{country}</span>
-                      {days >= 183 && (
-                        <Badge variant="destructive" className="text-xs">
-                          Steuerresidenz
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        {getPercentage(days)}% des Jahres
-                      </span>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{country}</span>
+                        {days >= 183 && (
+                          <Badge variant="destructive" className="text-xs">
+                            Steuerresidenz
+                          </Badge>
+                        )}
+                      </div>
                       <Badge variant="outline">
                         {days} Tag{days !== 1 ? 'e' : ''}
                       </Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      {getPercentage(days)}% des Jahres
                     </div>
                   </div>
                   <Progress value={(days / 365) * 100} className="h-2" />
