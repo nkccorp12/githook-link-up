@@ -3,13 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, MapPin, Calendar, Plane, Upload } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Plus, MapPin, Calendar, Plane, Upload, ChevronDown, FileText, PenTool } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import TravelEntryForm from "./TravelEntryForm";
 import TravelStatistics from "./TravelStatistics";
 import TravelTimeline from "./TravelTimeline";
 import TravelCalendar from "./TravelCalendar";
-import UserProfile from "./UserProfile";
+import SettingsButton from "./SettingsButton";
 
 export interface TimelineEntry {
   id: string;
@@ -237,6 +240,8 @@ const TravelTracker = () => {
   ]);
   const [showForm, setShowForm] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [jsonPasteDialog, setJsonPasteDialog] = useState(false);
+  const [jsonText, setJsonText] = useState('');
   const { toast } = useToast();
 
   const addEntry = (entry: Omit<TimelineEntry, "id">) => {
@@ -336,6 +341,57 @@ const TravelTracker = () => {
     });
   };
 
+  const handleJsonPaste = () => {
+    try {
+      const jsonData = JSON.parse(jsonText);
+      const importedEntries = Array.isArray(jsonData) ? jsonData : [jsonData];
+      
+      const validEntries: TimelineEntry[] = [];
+      
+      importedEntries.forEach((item: any) => {
+        if (item.date && item.type && item.country && item.city) {
+          const entry: TimelineEntry = {
+            id: crypto.randomUUID(),
+            date: new Date(item.date),
+            type: item.type,
+            country: item.country,
+            city: item.city,
+            endDate: item.endDate ? new Date(item.endDate) : undefined,
+            accommodationType: item.accommodationType,
+            days: item.days,
+            flightNumber: item.flightNumber,
+            departure: item.departure,
+            arrival: item.arrival,
+            comments: item.comments,
+          };
+          validEntries.push(entry);
+        }
+      });
+      
+      if (validEntries.length > 0) {
+        setEntries(prev => [...prev, ...validEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
+        toast({
+          title: "Import erfolgreich",
+          description: `${validEntries.length} Einträge wurden hinzugefügt.`,
+        });
+        setJsonPasteDialog(false);
+        setJsonText('');
+      } else {
+        toast({
+          title: "Fehler",
+          description: "Keine gültigen Einträge gefunden.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Fehler",
+        description: "Ungültiges JSON-Format.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const exportData = () => {
     const dataStr = JSON.stringify(entries, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
@@ -401,9 +457,9 @@ const TravelTracker = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2 relative">
-          {/* User Profile in top right */}
+          {/* Settings Button in top right */}
           <div className="absolute top-0 right-0">
-            <UserProfile />
+            <SettingsButton />
           </div>
           
           <div className="flex items-center justify-center gap-2 text-primary">
@@ -422,14 +478,126 @@ const TravelTracker = () => {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Button 
-            onClick={() => setShowForm(true)} 
-            size="lg"
-            className="bg-gradient-travel hover:shadow-travel transition-all duration-300"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Neue Reise hinzufügen
-          </Button>
+          {/* Neue Reise hinzufügen Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                size="lg"
+                className="bg-gradient-travel hover:shadow-travel transition-all duration-300"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Neue Reise hinzufügen
+                <ChevronDown className="h-4 w-4 ml-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className="w-56">
+              <DropdownMenuItem onClick={() => setShowForm(true)} className="flex items-center gap-2">
+                <PenTool className="h-4 w-4" />
+                <span>Manuell eingeben</span>
+              </DropdownMenuItem>
+              <Dialog open={jsonPasteDialog} onOpenChange={setJsonPasteDialog}>
+                <DialogTrigger asChild>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="flex items-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    <span>JSON einfügen</span>
+                  </DropdownMenuItem>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[600px]">
+                  <DialogHeader>
+                    <DialogTitle>JSON-Daten einfügen</DialogTitle>
+                    <DialogDescription>
+                      Füge JSON-Daten mit Reise-Einträgen ein. Das Format sollte ein Array oder einzelne Objekte mit den Feldern: date, type, country, city enthalten.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Textarea
+                      placeholder='[{"date": "2025-01-01", "type": "stay", "country": "Deutschland", "city": "Berlin", ...}]'
+                      value={jsonText}
+                      onChange={(e) => setJsonText(e.target.value)}
+                      className="min-h-[200px] font-mono text-sm"
+                    />
+                    <div className="flex justify-end gap-2">
+                      <Button variant="outline" onClick={() => setJsonPasteDialog(false)}>
+                        Abbrechen
+                      </Button>
+                      <Button onClick={handleJsonPaste}>
+                        Importieren
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <DropdownMenuItem 
+                onSelect={(e) => e.preventDefault()}
+                className="flex items-center gap-2"
+                onClick={(e) => {
+                  // Trigger file input simulation
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.json';
+                  input.onchange = (event) => {
+                    const file = (event.target as HTMLInputElement).files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (e) => {
+                        try {
+                          const jsonData = JSON.parse(e.target?.result as string);
+                          const importedEntries = Array.isArray(jsonData) ? jsonData : [jsonData];
+                          
+                          const validEntries: TimelineEntry[] = [];
+                          
+                          importedEntries.forEach((item: any) => {
+                            if (item.date && item.type && item.country && item.city) {
+                              const entry: TimelineEntry = {
+                                id: crypto.randomUUID(),
+                                date: new Date(item.date),
+                                type: item.type,
+                                country: item.country,
+                                city: item.city,
+                                endDate: item.endDate ? new Date(item.endDate) : undefined,
+                                accommodationType: item.accommodationType,
+                                days: item.days,
+                                flightNumber: item.flightNumber,
+                                departure: item.departure,
+                                arrival: item.arrival,
+                                comments: item.comments,
+                              };
+                              validEntries.push(entry);
+                            }
+                          });
+                          
+                          if (validEntries.length > 0) {
+                            setEntries(prev => [...prev, ...validEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
+                            toast({
+                              title: "Import erfolgreich",
+                              description: `${validEntries.length} Einträge wurden hinzugefügt.`,
+                            });
+                          } else {
+                            toast({
+                              title: "Fehler",
+                              description: "Keine gültigen Einträge in der JSON-Datei gefunden.",
+                              variant: "destructive",
+                            });
+                          }
+                        } catch (error) {
+                          toast({
+                            title: "Fehler",
+                            description: "Die JSON-Datei konnte nicht gelesen werden.",
+                            variant: "destructive",
+                          });
+                        }
+                      };
+                      reader.readAsText(file);
+                    }
+                  };
+                  input.click();
+                }}
+              >
+                <Upload className="h-4 w-4" />
+                <span>JSON-Datei hochladen</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {/* Compact Drag & Drop Zone */}
           <Card className={`border-2 border-dashed transition-all duration-300 ${
@@ -472,7 +640,7 @@ const TravelTracker = () => {
         )}
 
         {/* Tabs for Timeline and Calendar */}
-        <Tabs defaultValue="timeline" className="w-full">
+        <Tabs defaultValue="calendar" className="w-full">
           <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto">
             <TabsTrigger value="timeline">Timeline</TabsTrigger>
             <TabsTrigger value="calendar">Kalender</TabsTrigger>
