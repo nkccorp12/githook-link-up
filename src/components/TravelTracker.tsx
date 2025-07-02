@@ -239,7 +239,6 @@ const TravelTracker = () => {
     },
   ]);
   const [showForm, setShowForm] = useState(false);
-  const [isDragOver, setIsDragOver] = useState(false);
   const [jsonPasteDialog, setJsonPasteDialog] = useState(false);
   const [jsonText, setJsonText] = useState('');
   const { toast } = useToast();
@@ -258,86 +257,6 @@ const TravelTracker = () => {
     toast({
       title: "Event gelöscht",
       description: "Der Reise-Eintrag wurde erfolgreich entfernt.",
-    });
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    const jsonFiles = files.filter(file => file.name.endsWith('.json'));
-    
-    if (jsonFiles.length === 0) {
-      toast({
-        title: "Fehler",
-        description: "Bitte nur JSON-Dateien ablegen.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    jsonFiles.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const jsonData = JSON.parse(event.target?.result as string);
-          const importedEntries = Array.isArray(jsonData) ? jsonData : [jsonData];
-          
-          const validEntries: TimelineEntry[] = [];
-          
-          importedEntries.forEach((item: any) => {
-            if (item.date && item.type && item.country && item.city) {
-              const entry: TimelineEntry = {
-                id: crypto.randomUUID(),
-                date: new Date(item.date),
-                type: item.type,
-                country: item.country,
-                city: item.city,
-                endDate: item.endDate ? new Date(item.endDate) : undefined,
-                accommodationType: item.accommodationType,
-                days: item.days,
-                flightNumber: item.flightNumber,
-                departure: item.departure,
-                arrival: item.arrival,
-                comments: item.comments,
-              };
-              validEntries.push(entry);
-            }
-          });
-          
-          if (validEntries.length > 0) {
-            setEntries(prev => [...prev, ...validEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
-            toast({
-              title: "Import erfolgreich",
-              description: `${validEntries.length} Einträge wurden hinzugefügt.`,
-            });
-          } else {
-            toast({
-              title: "Fehler",
-              description: "Keine gültigen Einträge in der JSON-Datei gefunden.",
-              variant: "destructive",
-            });
-          }
-        } catch (error) {
-          toast({
-            title: "Fehler",
-            description: "Die JSON-Datei konnte nicht gelesen werden.",
-            variant: "destructive",
-          });
-        }
-      };
-      reader.readAsText(file);
     });
   };
 
@@ -459,7 +378,7 @@ const TravelTracker = () => {
         <div className="text-center space-y-2 relative">
           {/* Settings Button in top right */}
           <div className="absolute top-0 right-0">
-            <SettingsButton />
+            <SettingsButton entries={entries} />
           </div>
           
           <div className="flex items-center justify-center gap-2 text-primary">
@@ -477,7 +396,7 @@ const TravelTracker = () => {
         <TravelStatistics entries={entries} />
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div className="flex justify-center">
           {/* Neue Reise hinzufügen Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -490,7 +409,7 @@ const TravelTracker = () => {
                 <ChevronDown className="h-4 w-4 ml-2" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-56">
+            <DropdownMenuContent align="center" className="w-56 bg-background border shadow-lg z-50">
               <DropdownMenuItem onClick={() => setShowForm(true)} className="flex items-center gap-2">
                 <PenTool className="h-4 w-4" />
                 <span>Manuell eingeben</span>
@@ -527,108 +446,8 @@ const TravelTracker = () => {
                   </div>
                 </DialogContent>
               </Dialog>
-              <DropdownMenuItem 
-                onSelect={(e) => e.preventDefault()}
-                className="flex items-center gap-2"
-                onClick={(e) => {
-                  // Trigger file input simulation
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = '.json';
-                  input.onchange = (event) => {
-                    const file = (event.target as HTMLInputElement).files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (e) => {
-                        try {
-                          const jsonData = JSON.parse(e.target?.result as string);
-                          const importedEntries = Array.isArray(jsonData) ? jsonData : [jsonData];
-                          
-                          const validEntries: TimelineEntry[] = [];
-                          
-                          importedEntries.forEach((item: any) => {
-                            if (item.date && item.type && item.country && item.city) {
-                              const entry: TimelineEntry = {
-                                id: crypto.randomUUID(),
-                                date: new Date(item.date),
-                                type: item.type,
-                                country: item.country,
-                                city: item.city,
-                                endDate: item.endDate ? new Date(item.endDate) : undefined,
-                                accommodationType: item.accommodationType,
-                                days: item.days,
-                                flightNumber: item.flightNumber,
-                                departure: item.departure,
-                                arrival: item.arrival,
-                                comments: item.comments,
-                              };
-                              validEntries.push(entry);
-                            }
-                          });
-                          
-                          if (validEntries.length > 0) {
-                            setEntries(prev => [...prev, ...validEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
-                            toast({
-                              title: "Import erfolgreich",
-                              description: `${validEntries.length} Einträge wurden hinzugefügt.`,
-                            });
-                          } else {
-                            toast({
-                              title: "Fehler",
-                              description: "Keine gültigen Einträge in der JSON-Datei gefunden.",
-                              variant: "destructive",
-                            });
-                          }
-                        } catch (error) {
-                          toast({
-                            title: "Fehler",
-                            description: "Die JSON-Datei konnte nicht gelesen werden.",
-                            variant: "destructive",
-                          });
-                        }
-                      };
-                      reader.readAsText(file);
-                    }
-                  };
-                  input.click();
-                }}
-              >
-                <Upload className="h-4 w-4" />
-                <span>JSON-Datei hochladen</span>
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          {/* Compact Drag & Drop Zone */}
-          <Card className={`border-2 border-dashed transition-all duration-300 ${
-            isDragOver ? 'border-primary bg-primary/5' : 'border-muted-foreground/25'
-          }`}>
-            <CardContent 
-              className="p-4 text-center cursor-pointer hover:bg-muted/50 transition-colors min-w-[280px]"
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              <Upload className={`h-6 w-6 mx-auto mb-2 transition-colors ${
-                isDragOver ? 'text-primary' : 'text-muted-foreground'
-              }`} />
-              <p className="text-sm font-medium text-foreground mb-1">
-                JSON-Import
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Dateien hier ablegen
-              </p>
-            </CardContent>
-          </Card>
-          
-          <Button 
-            onClick={exportData}
-            variant="outline"
-            size="lg"
-          >
-            <Upload className="h-5 w-5 mr-2 rotate-180" />
-            Export JSON
-          </Button>
         </div>
 
         {/* Entry Form Modal */}
