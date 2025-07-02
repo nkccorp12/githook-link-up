@@ -53,7 +53,7 @@ const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
             Gesamttage {currentYear}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="text-center">
           <div className="text-2xl font-bold text-primary">{totalDays}</div>
           <p className="text-xs text-muted-foreground">
             von 365 Tagen ({((totalDays / 365) * 100).toFixed(1)}%)
@@ -70,7 +70,7 @@ const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
             Länder besucht
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="text-center">
           <div className="text-2xl font-bold text-accent">{Object.keys(countryStats).length}</div>
           <p className="text-xs text-muted-foreground">
             verschiedene Länder
@@ -86,7 +86,7 @@ const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
             Reiseeinträge
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="text-center">
           <div className="text-2xl font-bold text-success">{stayEntries.length}</div>
           <p className="text-xs text-muted-foreground">
             erfasste Reisen
@@ -102,7 +102,7 @@ const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
             183-Tage-Regel
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="text-center">
           {warningCountries.length > 0 ? (
             <div>
               <div className="text-2xl font-bold text-warning">{warningCountries.length}</div>

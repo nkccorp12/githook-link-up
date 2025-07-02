@@ -376,18 +376,18 @@ const TravelTracker = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2 relative">
-          {/* Settings Button in top right */}
-          <div className="absolute top-0 right-0">
+          {/* Settings Button in top right - with proper mobile spacing */}
+          <div className="absolute -top-2 right-0 md:top-0">
             <SettingsButton entries={entries} />
           </div>
           
-          <div className="flex items-center justify-center gap-2 text-primary">
-            <Plane className="h-8 w-8" />
-            <h1 className="text-4xl font-bold bg-gradient-travel bg-clip-text text-transparent">
+          <div className="flex items-center justify-center gap-2 text-primary pr-12 md:pr-0">
+            <Plane className="h-6 w-6 md:h-8 md:w-8" />
+            <h1 className="text-2xl md:text-4xl font-bold bg-gradient-travel bg-clip-text text-transparent">
               Travel Tracker
             </h1>
           </div>
-          <p className="text-muted-foreground text-lg">
+          <p className="text-muted-foreground text-sm md:text-lg px-4">
             Dokumentiere deine Reisen und behalte den Überblick über deine Aufenthalte
           </p>
         </div>
