@@ -8,27 +8,27 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Elegant dark theme with bronze and red accents */
-    --background: 0 0% 10%;
+    /* Dark solid theme like Lovable chat */
+    --background: 0 0% 7%;
     --foreground: 0 0% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 15%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 15%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
 
     /* Dark grays as primary */
-    --primary: 0 0% 20%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 0 0% 35%;
+    --primary: 0 0% 85%;
+    --primary-foreground: 0 0% 10%;
+    --primary-glow: 0 0% 70%;
 
-    /* Bronze tones */
-    --secondary: 30 25% 85%;
-    --secondary-foreground: 0 0% 15%;
+    /* Bronze tones for secondary */
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 30 15% 92%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
 
     /* Red accent */
     --accent: 0 70% 50%;
@@ -43,9 +43,9 @@ All colors MUST be HSL.
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 88%;
-    --input: 210 20% 94%;
-    --ring: 200 90% 45%;
+    --border: 0 0% 20%;
+    --input: 0 0% 18%;
+    --ring: 0 70% 50%;
 
     --radius: 0.75rem;
 
