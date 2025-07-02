@@ -3,13 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Plane, Mail, Lock } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   
   const { signIn, user } = useAuth();
@@ -38,15 +40,16 @@ const Auth = () => {
     <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 text-primary">
-            <Plane className="h-8 w-8" />
-            <h1 className="text-3xl font-bold bg-gradient-travel bg-clip-text text-transparent">
-              Travel Tracker
-            </h1>
+        <div className="text-center space-y-6">
+          <div className="flex items-center justify-center">
+            <img 
+              src="/lovable-uploads/f0dfdda1-2c10-4a8e-a48f-e61b03503676.png" 
+              alt="NHC Corp Logo" 
+              className="h-24 w-auto"
+            />
           </div>
           <p className="text-muted-foreground">
-            Melde dich an, um deine Reisen zu verwalten
+            Melde dich an, um fortzufahren
           </p>
         </div>
 
@@ -54,7 +57,7 @@ const Auth = () => {
           <CardHeader>
             <CardTitle>Anmelden</CardTitle>
             <CardDescription>
-              Melde dich mit deinen Zugangsdaten an
+              Gib deine Zugangsdaten ein
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -91,7 +94,18 @@ const Auth = () => {
                 </div>
               </div>
               
-              <Button 
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="remember" 
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                />
+                <Label htmlFor="remember" className="text-sm font-normal">
+                  Angemeldet bleiben
+                </Label>
+              </div>
+              
+              <Button
                 type="submit" 
                 className="w-full bg-gradient-travel hover:shadow-travel transition-all duration-300"
                 disabled={loading}
@@ -104,7 +118,7 @@ const Auth = () => {
         
         <div className="text-center text-sm text-muted-foreground">
           <p>
-            Mit der Anmeldung stimmst du unseren Nutzungsbedingungen zu.
+            © 2025 NHC Corp. Alle Rechte vorbehalten.
           </p>
         </div>
       </div>
