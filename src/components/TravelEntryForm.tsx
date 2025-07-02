@@ -9,11 +9,16 @@ import { X, Save } from "lucide-react";
 
 interface TravelEntryFormProps {
   onSubmit: (entry: {
-    startDate: Date;
-    endDate: Date;
+    date: Date;
+    endDate?: Date;
+    type: "stay" | "flight";
     country: string;
     city: string;
-    accommodationType: "airbnb" | "hotel" | "friend" | "other";
+    accommodationType?: "airbnb" | "hotel" | "friend" | "other";
+    days?: number;
+    flightNumber?: string;
+    departure?: string;
+    arrival?: string;
     comments?: string;
   }) => void;
   onCancel: () => void;
@@ -23,27 +28,50 @@ const TravelEntryForm: React.FC<TravelEntryFormProps> = ({ onSubmit, onCancel })
   const [formData, setFormData] = useState({
     startDate: "",
     endDate: "",
+    type: "stay" as "stay" | "flight",
     country: "",
     city: "",
     accommodationType: "" as "airbnb" | "hotel" | "friend" | "other",
+    flightNumber: "",
+    departure: "",
+    arrival: "",
     comments: "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.startDate || !formData.endDate || !formData.country || !formData.city || !formData.accommodationType) {
+    if (!formData.startDate || !formData.country || !formData.city || !formData.type) {
       return;
     }
 
-    onSubmit({
-      startDate: new Date(formData.startDate),
-      endDate: new Date(formData.endDate),
+    const baseEntry = {
+      date: new Date(formData.startDate),
+      type: formData.type,
       country: formData.country,
       city: formData.city,
-      accommodationType: formData.accommodationType,
       comments: formData.comments || undefined,
-    });
+    };
+
+    if (formData.type === 'stay') {
+      if (!formData.endDate || !formData.accommodationType) return;
+      
+      const days = Math.ceil((new Date(formData.endDate).getTime() - new Date(formData.startDate).getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      
+      onSubmit({
+        ...baseEntry,
+        endDate: new Date(formData.endDate),
+        accommodationType: formData.accommodationType,
+        days,
+      });
+    } else {
+      onSubmit({
+        ...baseEntry,
+        flightNumber: formData.flightNumber || undefined,
+        departure: formData.departure || undefined,
+        arrival: formData.arrival || undefined,
+      });
+    }
   };
 
   return (
@@ -65,9 +93,27 @@ const TravelEntryForm: React.FC<TravelEntryFormProps> = ({ onSubmit, onCancel })
         
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Typ</Label>
+              <Select 
+                value={formData.type} 
+                onValueChange={(value: "stay" | "flight") => 
+                  setFormData(prev => ({ ...prev, type: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Wähle Typ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="stay">Aufenthalt</SelectItem>
+                  <SelectItem value="flight">Flug</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="startDate">Ankunft</Label>
+                <Label htmlFor="startDate">{formData.type === 'stay' ? 'Ankunft' : 'Flugdatum'}</Label>
                 <Input
                   id="startDate"
                   type="date"
@@ -77,16 +123,18 @@ const TravelEntryForm: React.FC<TravelEntryFormProps> = ({ onSubmit, onCancel })
                 />
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="endDate">Abreise</Label>
-                <Input
-                  id="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
-                  required
-                />
-              </div>
+              {formData.type === 'stay' && (
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">Abreise</Label>
+                  <Input
+                    id="endDate"
+                    type="date"
+                    value={formData.endDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                    required
+                  />
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -111,31 +159,69 @@ const TravelEntryForm: React.FC<TravelEntryFormProps> = ({ onSubmit, onCancel })
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Unterkunftstyp</Label>
-              <Select 
-                value={formData.accommodationType} 
-                onValueChange={(value: "airbnb" | "hotel" | "friend" | "other") => 
-                  setFormData(prev => ({ ...prev, accommodationType: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Wähle eine Option" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="airbnb">Airbnb</SelectItem>
-                  <SelectItem value="hotel">Hotel</SelectItem>
-                  <SelectItem value="friend">Bei Freunden</SelectItem>
-                  <SelectItem value="other">Sonstiges</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            {formData.type === 'stay' && (
+              <div className="space-y-2">
+                <Label>Unterkunftstyp</Label>
+                <Select 
+                  value={formData.accommodationType} 
+                  onValueChange={(value: "airbnb" | "hotel" | "friend" | "other") => 
+                    setFormData(prev => ({ ...prev, accommodationType: value }))
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Wähle eine Option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="airbnb">Airbnb</SelectItem>
+                    <SelectItem value="hotel">Hotel</SelectItem>
+                    <SelectItem value="friend">Bei Freunden</SelectItem>
+                    <SelectItem value="other">Sonstiges</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {formData.type === 'flight' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="flightNumber">Flugnummer (optional)</Label>
+                  <Input
+                    id="flightNumber"
+                    placeholder="z.B. LH441"
+                    value={formData.flightNumber}
+                    onChange={(e) => setFormData(prev => ({ ...prev, flightNumber: e.target.value }))}
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="departure">Von</Label>
+                    <Input
+                      id="departure"
+                      placeholder="z.B. Frankfurt"
+                      value={formData.departure}
+                      onChange={(e) => setFormData(prev => ({ ...prev, departure: e.target.value }))}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="arrival">Nach</Label>
+                    <Input
+                      id="arrival"
+                      placeholder="z.B. Bangkok"
+                      value={formData.arrival}
+                      onChange={(e) => setFormData(prev => ({ ...prev, arrival: e.target.value }))}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="comments">Kommentare / Links (optional)</Label>
               <Textarea
                 id="comments"
-                placeholder="z.B. Booking-URL, Notizen..."
+                placeholder={formData.type === 'flight' ? 'z.B. Zeiten, Terminal...' : 'z.B. Booking-URL, Notizen...'}
                 value={formData.comments}
                 onChange={(e) => setFormData(prev => ({ ...prev, comments: e.target.value }))}
                 rows={3}

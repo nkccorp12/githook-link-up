@@ -5,44 +5,69 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, MapPin, Calendar, Plane } from "lucide-react";
 import TravelEntryForm from "./TravelEntryForm";
 import TravelStatistics from "./TravelStatistics";
+import TravelTimeline from "./TravelTimeline";
 
-export interface TravelEntry {
+export interface TimelineEntry {
   id: string;
-  startDate: Date;
-  endDate: Date;
+  date: Date;
+  type: "stay" | "flight";
   country: string;
   city: string;
-  accommodationType: "airbnb" | "hotel" | "friend" | "other";
+  // For stays
+  endDate?: Date;
+  accommodationType?: "airbnb" | "hotel" | "friend" | "other";
+  days?: number;
+  // For flights
+  flightNumber?: string;
+  departure?: string;
+  arrival?: string;
   comments?: string;
-  days: number;
 }
 
 const TravelTracker = () => {
-  const [entries, setEntries] = useState<TravelEntry[]>([
+  const [entries, setEntries] = useState<TimelineEntry[]>([
+    // Thailand Jan-März
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-01-01'),
+      date: new Date('2025-01-01'),
       endDate: new Date('2025-03-11'),
+      type: 'stay',
       country: 'Thailand',
       city: 'Chiang Rai',
       accommodationType: 'hotel',
       comments: 'Längerer Aufenthalt zu Jahresbeginn',
       days: 70
     },
+    // Rückflug nach Deutschland
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-03-12'),
+      date: new Date('2025-03-11'),
+      type: 'flight',
+      country: 'Deutschland',
+      city: 'Frankfurt',
+      flightNumber: 'Rückflug',
+      departure: 'Bangkok',
+      arrival: 'Frankfurt',
+      comments: 'Rückflug nach Deutschland'
+    },
+    // Deutschland März-April
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-03-12'),
       endDate: new Date('2025-04-07'),
+      type: 'stay',
       country: 'Deutschland',
       city: 'Frankfurt',
       accommodationType: 'friend',
       comments: 'Aufenthalt nach Thailand-Rückkehr',
       days: 27
     },
+    // Deutschland April
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-04-08'),
+      date: new Date('2025-04-08'),
       endDate: new Date('2025-04-10'),
+      type: 'stay',
       country: 'Deutschland',
       city: 'Frankfurt',
       accommodationType: 'hotel',
@@ -51,63 +76,124 @@ const TravelTracker = () => {
     },
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-04-10'),
+      date: new Date('2025-04-10'),
       endDate: new Date('2025-04-11'),
+      type: 'stay',
       country: 'Deutschland',
       city: 'Heidelberg',
       accommodationType: 'hotel',
       comments: 'Ganztägiger Aufenthalt',
       days: 2
     },
+    // Juni Flüge
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-06-12'),
-      endDate: new Date('2025-06-12'),
+      date: new Date('2025-06-12'),
+      type: 'flight',
       country: 'Deutschland',
       city: 'Berlin',
-      accommodationType: 'other',
-      comments: 'Flug DE4087 Frankfurt → Berlin, 14:50-15:55',
-      days: 1
+      flightNumber: 'DE4087',
+      departure: 'Frankfurt (FRA)',
+      arrival: 'Berlin (BER)',
+      comments: '14:50-15:55'
     },
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-06-15'),
-      endDate: new Date('2025-06-15'),
+      date: new Date('2025-06-15'),
+      type: 'flight',
       country: 'Deutschland',
       city: 'Frankfurt',
-      accommodationType: 'other',
-      comments: 'Flug DE4086 Berlin → Frankfurt, 09:00-10:10',
-      days: 1
+      flightNumber: 'DE4086',
+      departure: 'Berlin (BER)',
+      arrival: 'Frankfurt (FRA)',
+      comments: '09:00-10:10'
+    },
+    // Juni - Thailand
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-06-23'),
+      type: 'flight',
+      country: 'Thailand',
+      city: 'Bangkok',
+      flightNumber: 'Frankfurt → Bangkok',
+      departure: 'Frankfurt',
+      arrival: 'Bangkok',
+      comments: '22:10 CET → 14:30 (+1 Tag)'
     },
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-06-24'),
+      date: new Date('2025-06-24'),
       endDate: new Date('2025-06-25'),
+      type: 'stay',
       country: 'Thailand',
       city: 'Bangkok',
       accommodationType: 'hotel',
-      comments: 'Hilton Garden Inn Bangkok Silom, Check-in 24.06. 14:00, Check-out 25.06. 12:00',
+      comments: 'Hilton Garden Inn Bangkok Silom',
       days: 2
     },
     {
       id: crypto.randomUUID(),
-      startDate: new Date('2025-06-25'),
+      date: new Date('2025-06-25'),
+      type: 'flight',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      flightNumber: 'VZ132',
+      departure: 'Bangkok (BKK)',
+      arrival: 'Chiang Rai (CNX)',
+      comments: '13:30-14:55'
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-06-25'),
       endDate: new Date('2025-07-01'),
+      type: 'stay',
       country: 'Thailand',
       city: 'Chiang Rai',
       accommodationType: 'hotel',
-      comments: 'Flug BKK → CNX (Thai Vietjet Air VZ132), Rückflug am 01.07',
+      comments: 'Aufenthalt bis Rückflug',
       days: 7
+    },
+    // Barcelona Trip
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-04'),
+      type: 'flight',
+      country: 'Spanien',
+      city: 'Barcelona',
+      flightNumber: 'Hinflug',
+      departure: 'Deutschland',
+      arrival: 'Barcelona',
+      comments: 'Freitag Abflug'
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-04'),
+      endDate: new Date('2025-07-07'),
+      type: 'stay',
+      country: 'Spanien',
+      city: 'Barcelona',
+      accommodationType: 'hotel',
+      comments: 'Wochenend-Trip',
+      days: 4
+    },
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-07'),
+      type: 'flight',
+      country: 'Deutschland',
+      city: 'Frankfurt',
+      flightNumber: 'Rückflug',
+      departure: 'Barcelona',
+      arrival: 'Deutschland',
+      comments: 'Montag Rückflug'
     }
   ]);
   const [showForm, setShowForm] = useState(false);
 
-  const addEntry = (entry: Omit<TravelEntry, "id" | "days">) => {
-    const days = Math.ceil((entry.endDate.getTime() - entry.startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-    const newEntry: TravelEntry = {
+  const addEntry = (entry: Omit<TimelineEntry, "id">) => {
+    const newEntry: TimelineEntry = {
       ...entry,
       id: crypto.randomUUID(),
-      days,
     };
     setEntries(prev => [...prev, newEntry]);
     setShowForm(false);
@@ -170,63 +256,8 @@ const TravelTracker = () => {
           />
         )}
 
-        {/* Entries List */}
-        <div className="space-y-4">
-          <h2 className="text-2xl font-semibold text-foreground flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-primary" />
-            Deine Reisen ({entries.length})
-          </h2>
-          
-          {entries.length === 0 ? (
-            <Card className="shadow-card">
-              <CardContent className="p-8 text-center">
-                <Plane className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-muted-foreground mb-2">
-                  Noch keine Reisen erfasst
-                </h3>
-                <p className="text-muted-foreground">
-                  Füge deine erste Reise hinzu, um zu beginnen!
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {entries.map((entry) => (
-                <Card key={entry.id} className="shadow-card hover:shadow-travel transition-all duration-300">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between">
-                      <span className="text-lg">{entry.city}</span>
-                      <Badge variant="outline">{entry.country}</Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
-                      <span>
-                        {entry.startDate.toLocaleDateString('de-DE')} - {entry.endDate.toLocaleDateString('de-DE')}
-                      </span>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <Badge variant={getAccommodationBadgeVariant(entry.accommodationType)}>
-                        {getAccommodationLabel(entry.accommodationType)}
-                      </Badge>
-                      <span className="text-sm font-medium text-primary">
-                        {entry.days} Tag{entry.days !== 1 ? 'e' : ''}
-                      </span>
-                    </div>
-
-                    {entry.comments && (
-                      <p className="text-sm text-muted-foreground bg-muted p-2 rounded-md">
-                        {entry.comments}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Timeline */}
+        <TravelTimeline entries={entries} />
       </div>
     </div>
   );

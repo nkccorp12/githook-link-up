@@ -2,23 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BarChart3, Globe, Calendar, AlertTriangle } from "lucide-react";
-import type { TravelEntry } from "./TravelTracker";
+import type { TimelineEntry } from "./TravelTracker";
 
 interface TravelStatisticsProps {
-  entries: TravelEntry[];
+  entries: TimelineEntry[];
 }
 
 const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
-  // Calculate statistics
+  // Calculate statistics - only for stays
   const currentYear = new Date().getFullYear();
-  const totalDays = entries.reduce((sum, entry) => sum + entry.days, 0);
+  const stayEntries = entries.filter(entry => entry.type === 'stay');
+  const totalDays = stayEntries.reduce((sum, entry) => sum + (entry.days || 0), 0);
   
-  // Group by country
-  const countryStats = entries.reduce((acc, entry) => {
+  // Group by country - only stays
+  const countryStats = stayEntries.reduce((acc, entry) => {
     if (!acc[entry.country]) {
       acc[entry.country] = 0;
     }
-    acc[entry.country] += entry.days;
+    acc[entry.country] += entry.days || 0;
     return acc;
   }, {} as Record<string, number>);
 
@@ -86,7 +87,7 @@ const TravelStatistics: React.FC<TravelStatisticsProps> = ({ entries }) => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold text-success">{entries.length}</div>
+          <div className="text-2xl font-bold text-success">{stayEntries.length}</div>
           <p className="text-xs text-muted-foreground">
             erfasste Reisen
           </p>
