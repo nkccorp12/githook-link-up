@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plane, MapPin, Calendar, Hotel, Home, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Plane, MapPin, Calendar, Hotel, Home, Users, Trash } from "lucide-react";
 import type { TimelineEntry } from "./TravelTracker";
 
 interface TravelTimelineProps {
   entries: TimelineEntry[];
+  onDeleteEntry: (id: string) => void;
 }
 
 const getCountryColor = (country: string) => {
@@ -34,7 +36,7 @@ const getAccommodationLabel = (type?: string) => {
   }
 };
 
-const TravelTimeline: React.FC<TravelTimelineProps> = ({ entries }) => {
+const TravelTimeline: React.FC<TravelTimelineProps> = ({ entries, onDeleteEntry }) => {
   const sortedEntries = [...entries].sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
@@ -68,9 +70,19 @@ const TravelTimeline: React.FC<TravelTimelineProps> = ({ entries }) => {
                       <span className="text-lg">{entry.city}</span>
                       <Badge variant="outline">{entry.country}</Badge>
                     </CardTitle>
-                    <Badge variant={entry.type === 'flight' ? 'destructive' : 'default'}>
-                      {entry.type === 'flight' ? 'Flug' : 'Aufenthalt'}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant={entry.type === 'flight' ? 'destructive' : 'default'}>
+                        {entry.type === 'flight' ? 'Flug' : 'Aufenthalt'}
+                      </Badge>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onDeleteEntry(entry.id)}
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 

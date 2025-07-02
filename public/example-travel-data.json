@@ -1,0 +1,52 @@
+[
+  {
+    "date": "2025-08-01",
+    "endDate": "2025-08-05",
+    "type": "stay",
+    "country": "Italien",
+    "city": "Rom",
+    "accommodationType": "hotel",
+    "days": 5,
+    "comments": "Städtetrip mit Besichtigung des Kolosseums"
+  },
+  {
+    "date": "2025-08-05",
+    "type": "flight",
+    "country": "Italien",
+    "city": "Mailand",
+    "flightNumber": "AZ1234",
+    "departure": "Rom (FCO)",
+    "arrival": "Mailand (MXP)",
+    "comments": "Weiterflug nach Mailand, 14:30-15:45"
+  },
+  {
+    "date": "2025-08-05",
+    "endDate": "2025-08-08",
+    "type": "stay",
+    "country": "Italien",
+    "city": "Mailand",
+    "accommodationType": "airbnb",
+    "days": 3,
+    "comments": "Shopping und Kultur in Mailand"
+  },
+  {
+    "date": "2025-08-08",
+    "type": "flight",
+    "country": "Deutschland",
+    "city": "Frankfurt",
+    "flightNumber": "LH9876",
+    "departure": "Mailand (MXP)",
+    "arrival": "Frankfurt (FRA)",
+    "comments": "Rückflug nach Deutschland, 16:20-17:40"
+  },
+  {
+    "date": "2025-09-15",
+    "endDate": "2025-09-22",
+    "type": "stay",
+    "country": "Frankreich",
+    "city": "Paris",
+    "accommodationType": "friend",
+    "days": 7,
+    "comments": "Besuch bei Freunden in Paris"
+  }
+]
