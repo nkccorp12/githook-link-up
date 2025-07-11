@@ -2,9 +2,9 @@
   "embeddings": [
     {
       "tensorName": "My Embeddings",
-      "tensorShape": [1000, 50],  // ⬅️ Diese Werte bitte anpassen!
-      "tensorPath": "https://raw.githubusercontent.com/nkccorp12/githook-link-up/main/public/embeddings.tsv",
-      "metadataPath": "https://raw.githubusercontent.com/nkccorp12/githook-link-up/main/public/metadata.tsv"
+      "tensorShape": [1000, 50],
+      "tensorPath": "https://nkccorp12.github.io/githook-link-up/public/embeddings.tsv",
+      "metadataPath": "https://nkccorp12.github.io/githook-link-up/public/metadata.tsv"
     }
   ]
 }
