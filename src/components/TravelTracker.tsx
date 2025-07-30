@@ -189,6 +189,30 @@ const TravelTracker = () => {
       arrival: 'Frankfurt',
       comments: 'Rückflug nach Deutschland'
     },
+    // Zurück nach Mosbach 2.-3. Juli
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-02'),
+      endDate: new Date('2025-07-03'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      comments: 'Zurück in Mosbach nach Thailand',
+      days: 2
+    },
+    // Barcelona 4.-7. Juli
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-04'),
+      endDate: new Date('2025-07-07'),
+      type: 'stay',
+      country: 'Spanien',
+      city: 'Barcelona',
+      accommodationType: 'hotel',
+      comments: 'Barcelona-Trip',
+      days: 4
+    },
     // Neue Juli-Daten: 8.-19. Juli Mosbach
     {
       id: crypto.randomUUID(),
