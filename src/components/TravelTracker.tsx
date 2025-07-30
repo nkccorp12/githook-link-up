@@ -61,37 +61,36 @@ const TravelTracker = () => {
     {
       id: crypto.randomUUID(),
       date: new Date('2025-03-12'),
-      endDate: new Date('2025-04-01'),
+      endDate: new Date('2025-03-31'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Frankfurt',
       accommodationType: 'hotel',
       comments: 'Hotel-Aufenthalt nach Thailand-Rückkehr',
-      days: 21
+      days: 20
     },
-    // Mosbach ab April (Standard-Aufenthalt)
+    // 31. März Frankfurt
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-03-31'),
+      endDate: new Date('2025-03-31'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Frankfurt',
+      accommodationType: 'hotel',
+      days: 1
+    },
+    // Mosbach ab April
     {
       id: crypto.randomUUID(),
       date: new Date('2025-04-01'),
-      endDate: new Date('2025-04-30'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      comments: 'Standard-Aufenthalt in Mosbach',
-      days: 30
-    },
-    // 30. April Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-04-30'),
       endDate: new Date('2025-06-12'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Mosbach',
       accommodationType: 'other',
-      comments: 'Fortsetzung Mosbach bis Berlin-Trip',
-      days: 43
+      comments: 'Standard-Aufenthalt in Mosbach',
+      days: 73
     },
     // Berlin Flug hin
     {
@@ -181,13 +180,24 @@ const TravelTracker = () => {
     {
       id: crypto.randomUUID(),
       date: new Date('2025-06-25'),
-      endDate: new Date('2025-07-01'),
+      endDate: new Date('2025-06-30'),
       type: 'stay',
       country: 'Thailand',
       city: 'Chiang Rai',
       accommodationType: 'hotel',
       comments: 'Aufenthalt bis Rückflug',
-      days: 7
+      days: 6
+    },
+    // 30. Juni Chiang Rai
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-06-30'),
+      endDate: new Date('2025-06-30'),
+      type: 'stay',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      days: 1
     },
     // 31. Januar Chiang Rai (Ergänzung)
     {
