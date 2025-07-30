@@ -140,12 +140,34 @@ const TravelTracker = () => {
     {
       id: crypto.randomUUID(),
       date: new Date('2025-05-01'),
+      endDate: new Date('2025-05-29'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 29
+    },
+    // 30. Mai Chiang Rai
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-05-30'),
+      endDate: new Date('2025-05-30'),
+      type: 'stay',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      days: 1
+    },
+    // 31. Mai Mosbach
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-05-31'),
       endDate: new Date('2025-05-31'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Mosbach',
       accommodationType: 'other',
-      days: 31
+      days: 1
     },
     // Mosbach Juni bis 12.
     {
@@ -276,6 +298,17 @@ const TravelTracker = () => {
       departure: 'Chiang Rai/Bangkok',
       arrival: 'Frankfurt',
       comments: 'Rückflug nach Deutschland'
+    },
+    // 1. Juli Mosbach
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-01'),
+      endDate: new Date('2025-07-01'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 1
     },
     // Mosbach 2.-3. Juli
     {
