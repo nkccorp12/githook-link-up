@@ -384,51 +384,75 @@ const TravelTracker = () => {
   const [jsonText, setJsonText] = useState('');
   const { toast } = useToast();
 
-  // Automatische Sofia-Funktion ab 1. August
-  const autoFillSofiaEntries = () => {
-    const startDate = new Date('2025-08-01');
-    const today = new Date();
-    const newEntries: TimelineEntry[] = [];
+  // Sofia-Einträge für August (statisch)
+  const [hasInitialized, setHasInitialized] = useState(false);
 
-    // Iteriere durch alle Tage ab 1. August bis heute
-    for (let currentDate = new Date(startDate); currentDate <= today; currentDate.setDate(currentDate.getDate() + 1)) {
-      const dateStr = currentDate.toDateString();
-      
-      // Prüfe ob bereits ein Eintrag für dieses Datum existiert
-      const existingEntry = entries.find(entry => {
-        const entryDate = new Date(entry.date);
-        if (entry.type === 'stay' && entry.endDate) {
-          const endDate = new Date(entry.endDate);
-          return currentDate >= entryDate && currentDate <= endDate;
-        }
-        return entryDate.toDateString() === dateStr;
-      });
-
-      // Falls kein Eintrag existiert, füge Sofia hinzu
-      if (!existingEntry) {
-        newEntries.push({
+  useEffect(() => {
+    if (!hasInitialized) {
+      // Füge fehlende Monatsletzten hinzu
+      const additionalEntries: TimelineEntry[] = [
+        // 29. Februar (Schaltjahr 2025 hat keinen 29.2.)
+        // 31. August Sofia
+        {
           id: crypto.randomUUID(),
-          date: new Date(currentDate),
-          endDate: new Date(currentDate),
+          date: new Date('2025-08-31'),
+          endDate: new Date('2025-08-31'),
           type: 'stay',
           country: 'Bulgarien',
           city: 'Sofia',
           accommodationType: 'other',
           days: 1
-        });
-      }
-    }
+        },
+        // 30. September Sofia
+        {
+          id: crypto.randomUUID(),
+          date: new Date('2025-09-30'),
+          endDate: new Date('2025-09-30'),
+          type: 'stay',
+          country: 'Bulgarien',
+          city: 'Sofia',
+          accommodationType: 'other',
+          days: 1
+        },
+        // 31. Oktober Sofia
+        {
+          id: crypto.randomUUID(),
+          date: new Date('2025-10-31'),
+          endDate: new Date('2025-10-31'),
+          type: 'stay',
+          country: 'Bulgarien',
+          city: 'Sofia',
+          accommodationType: 'other',
+          days: 1
+        },
+        // 30. November Sofia
+        {
+          id: crypto.randomUUID(),
+          date: new Date('2025-11-30'),
+          endDate: new Date('2025-11-30'),
+          type: 'stay',
+          country: 'Bulgarien',
+          city: 'Sofia',
+          accommodationType: 'other',
+          days: 1
+        },
+        // 31. Dezember Sofia
+        {
+          id: crypto.randomUUID(),
+          date: new Date('2025-12-31'),
+          endDate: new Date('2025-12-31'),
+          type: 'stay',
+          country: 'Bulgarien',
+          city: 'Sofia',
+          accommodationType: 'other',
+          days: 1
+        }
+      ];
 
-    // Füge neue Einträge hinzu falls welche erstellt wurden
-    if (newEntries.length > 0) {
-      setEntries(prev => [...prev, ...newEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
+      setEntries(prev => [...prev, ...additionalEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
+      setHasInitialized(true);
     }
-  };
-
-  // Führe die automatische Sofia-Funktion beim Component Mount aus
-  useEffect(() => {
-    autoFillSofiaEntries();
-  }, []); // Leer dependency array bedeutet nur einmal beim Mount
+  }, [hasInitialized]);
 
   const addEntry = (entry: Omit<TimelineEntry, "id">) => {
     const newEntry: TimelineEntry = {
