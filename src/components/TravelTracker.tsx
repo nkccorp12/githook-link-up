@@ -73,13 +73,25 @@ const TravelTracker = () => {
     {
       id: crypto.randomUUID(),
       date: new Date('2025-04-01'),
-      endDate: new Date('2025-06-12'),
+      endDate: new Date('2025-04-30'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Mosbach',
       accommodationType: 'other',
       comments: 'Standard-Aufenthalt in Mosbach',
-      days: 72
+      days: 30
+    },
+    // 30. April Mosbach
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-04-30'),
+      endDate: new Date('2025-06-12'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      comments: 'Fortsetzung Mosbach bis Berlin-Trip',
+      days: 43
     },
     // Berlin Flug hin
     {
@@ -177,6 +189,18 @@ const TravelTracker = () => {
       comments: 'Aufenthalt bis Rückflug',
       days: 7
     },
+    // 31. Januar Chiang Rai (Ergänzung)
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-01-31'),
+      endDate: new Date('2025-01-31'),
+      type: 'stay',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      comments: '31. Januar Aufenthalt',
+      days: 1
+    },
     // Zurück nach Deutschland (impliziert)
     {
       id: crypto.randomUUID(),
@@ -245,6 +269,17 @@ const TravelTracker = () => {
       city: 'Mosbach',
       accommodationType: 'other',
       days: 1
+    },
+    // 27.-29. Juli Mosbach
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-27'),
+      endDate: new Date('2025-07-29'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 3
     },
     // 30.-31. Juli Frankfurt
     {
