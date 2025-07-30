@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -189,59 +189,101 @@ const TravelTracker = () => {
       arrival: 'Frankfurt',
       comments: 'Rückflug nach Deutschland'
     },
-    // Zurück nach Mosbach
+    // Neue Juli-Daten: 8.-19. Juli Mosbach
     {
       id: crypto.randomUUID(),
-      date: new Date('2025-07-02'),
-      endDate: new Date('2025-07-04'),
+      date: new Date('2025-07-08'),
+      endDate: new Date('2025-07-19'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Mosbach',
       accommodationType: 'other',
-      comments: 'Zurück in Mosbach nach Thailand',
-      days: 2
+      days: 12
     },
-    // Barcelona Flug hin
+    // 20.-25. Juli Amsterdam
     {
       id: crypto.randomUUID(),
-      date: new Date('2025-07-04'),
-      type: 'flight',
-      country: 'Spanien',
-      city: 'Barcelona',
-      flightNumber: 'Hinflug',
-      departure: 'Deutschland',
-      arrival: 'Barcelona',
-      comments: 'Freitag Abflug'
-    },
-    // Barcelona Aufenthalt
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-04'),
-      endDate: new Date('2025-07-07'),
+      date: new Date('2025-07-20'),
+      endDate: new Date('2025-07-25'),
       type: 'stay',
-      country: 'Spanien',
-      city: 'Barcelona',
-      accommodationType: 'hotel',
-      comments: 'Wochenend-Trip',
-      days: 4
+      country: 'Niederlande',
+      city: 'Amsterdam',
+      accommodationType: 'other',
+      days: 6
     },
-    // Barcelona Rückflug
+    // 26. Juli Mosbach (nur ein Tag)
     {
       id: crypto.randomUUID(),
-      date: new Date('2025-07-07'),
-      type: 'flight',
+      date: new Date('2025-07-26'),
+      endDate: new Date('2025-07-26'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 1
+    },
+    // 30.-31. Juli Frankfurt
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-07-30'),
+      endDate: new Date('2025-07-31'),
+      type: 'stay',
       country: 'Deutschland',
       city: 'Frankfurt',
-      flightNumber: 'Rückflug',
-      departure: 'Barcelona',
-      arrival: 'Deutschland',
-      comments: 'Montag Rückflug'
+      accommodationType: 'other',
+      days: 2
     },
   ]);
   const [showForm, setShowForm] = useState(false);
   const [jsonPasteDialog, setJsonPasteDialog] = useState(false);
   const [jsonText, setJsonText] = useState('');
   const { toast } = useToast();
+
+  // Automatische Sofia-Funktion ab 1. August
+  const autoFillSofiaEntries = () => {
+    const startDate = new Date('2025-08-01');
+    const today = new Date();
+    const newEntries: TimelineEntry[] = [];
+
+    // Iteriere durch alle Tage ab 1. August bis heute
+    for (let currentDate = new Date(startDate); currentDate <= today; currentDate.setDate(currentDate.getDate() + 1)) {
+      const dateStr = currentDate.toDateString();
+      
+      // Prüfe ob bereits ein Eintrag für dieses Datum existiert
+      const existingEntry = entries.find(entry => {
+        const entryDate = new Date(entry.date);
+        if (entry.type === 'stay' && entry.endDate) {
+          const endDate = new Date(entry.endDate);
+          return currentDate >= entryDate && currentDate <= endDate;
+        }
+        return entryDate.toDateString() === dateStr;
+      });
+
+      // Falls kein Eintrag existiert, füge Sofia hinzu
+      if (!existingEntry) {
+        newEntries.push({
+          id: crypto.randomUUID(),
+          date: new Date(currentDate),
+          endDate: new Date(currentDate),
+          type: 'stay',
+          country: 'Bulgarien',
+          city: 'Sofia',
+          accommodationType: 'other',
+          days: 1
+        });
+      }
+    }
+
+    // Füge neue Einträge hinzu falls welche erstellt wurden
+    if (newEntries.length > 0) {
+      setEntries(prev => [...prev, ...newEntries].sort((a, b) => a.date.getTime() - b.date.getTime()));
+    }
+  };
+
+  // Führe die automatische Sofia-Funktion beim Component Mount aus
+  useEffect(() => {
+    autoFillSofiaEntries();
+  }, []); // Leer dependency array bedeutet nur einmal beim Mount
 
   const addEntry = (entry: Omit<TimelineEntry, "id">) => {
     const newEntry: TimelineEntry = {
