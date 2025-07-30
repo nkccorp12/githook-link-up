@@ -508,6 +508,45 @@ const TravelTracker = () => {
     });
   };
 
+  const updateDayRange = (location: { city: string; country: string }, startDate: Date, endDate: Date) => {
+    // Remove existing entries that overlap with the date range
+    const rangeStart = new Date(startDate);
+    rangeStart.setHours(0, 0, 0, 0);
+    const rangeEnd = new Date(endDate);
+    rangeEnd.setHours(23, 59, 59, 999);
+
+    const filteredEntries = entries.filter(entry => {
+      if (entry.type !== 'stay') return true;
+      const entryDate = new Date(entry.date);
+      const entryEndDate = entry.endDate || entry.date;
+      
+      // Keep entries that don't overlap with the target range
+      return !(entryDate <= rangeEnd && entryEndDate >= rangeStart);
+    });
+
+    // Calculate the number of days
+    const daysDiff = Math.ceil((rangeEnd.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+    // Add new entry for the date range
+    const newEntry: TimelineEntry = {
+      id: crypto.randomUUID(),
+      date: new Date(startDate),
+      endDate: new Date(endDate),
+      type: 'stay',
+      country: location.country,
+      city: location.city,
+      accommodationType: 'other',
+      days: daysDiff
+    };
+
+    setEntries([...filteredEntries, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
+    
+    toast({
+      title: "Zeitraum aktualisiert",
+      description: `Aufenthalt von ${startDate.toLocaleDateString('de-DE')} bis ${endDate.toLocaleDateString('de-DE')} in ${location.city}, ${location.country} eingetragen.`,
+    });
+  };
+
   const deleteDay = (date: Date) => {
     const dayStart = new Date(date);
     dayStart.setHours(0, 0, 0, 0);
@@ -745,6 +784,7 @@ const TravelTracker = () => {
                 <TravelCalendar 
                   entries={entries} 
                   onUpdateDay={updateDay}
+                  onUpdateDayRange={updateDayRange}
                   onDeleteDay={deleteDay}
                 />
           </TabsContent>

@@ -8,10 +8,11 @@ import DayEditor from "./DayEditor";
 interface TravelCalendarProps {
   entries: TimelineEntry[];
   onUpdateDay: (date: Date, location: { city: string; country: string }) => void;
+  onUpdateDayRange: (location: { city: string; country: string }, startDate: Date, endDate: Date) => void;
   onDeleteDay: (date: Date) => void;
 }
 
-const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries, onUpdateDay, onDeleteDay }) => {
+const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries, onUpdateDay, onUpdateDayRange, onDeleteDay }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [dayEditorOpen, setDayEditorOpen] = useState(false);
   const currentYear = new Date().getFullYear();
@@ -110,6 +111,13 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries, onUpdateDay, o
     }
   };
 
+  const handleSaveDayRange = (location: { city: string; country: string }, dateRange: any) => {
+    if (dateRange?.from && dateRange?.to) {
+      onUpdateDayRange(location, dateRange.from, dateRange.to);
+      setDayEditorOpen(false);
+    }
+  };
+
   const handleDeleteDay = () => {
     if (selectedDate) {
       onDeleteDay(selectedDate);
@@ -202,6 +210,7 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries, onUpdateDay, o
         currentCountry={selectedDate ? getCurrentLocationForDate(selectedDate)?.country : undefined}
         availableLocations={selectedDate ? getAvailableLocationsForMonth(selectedDate.getMonth()) : []}
         onSave={handleSaveDay}
+        onSaveRange={handleSaveDayRange}
         onDelete={handleDeleteDay}
       />
     </div>
