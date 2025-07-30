@@ -1,13 +1,19 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CalendarDays, MapPin } from "lucide-react";
 import type { TimelineEntry } from "./TravelTracker";
+import DayEditor from "./DayEditor";
 
 interface TravelCalendarProps {
   entries: TimelineEntry[];
+  onUpdateDay: (date: Date, location: { city: string; country: string }) => void;
+  onDeleteDay: (date: Date) => void;
 }
 
-const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries }) => {
+const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries, onUpdateDay, onDeleteDay }) => {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [dayEditorOpen, setDayEditorOpen] = useState(false);
   const currentYear = new Date().getFullYear();
   const months = [
     'Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
@@ -19,6 +25,13 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries }) => {
       'Thailand': 'bg-emerald-500',
       'Deutschland': 'bg-blue-500', 
       'Spanien': 'bg-yellow-500',
+      'Bulgarien': 'bg-purple-500',
+      'Niederlande': 'bg-orange-500',
+      'Österreich': 'bg-red-500',
+      'Schweiz': 'bg-red-600',
+      'Frankreich': 'bg-indigo-500',
+      'Italien': 'bg-green-600',
+      'Griechenland': 'bg-cyan-500',
     };
     return colors[country as keyof typeof colors] || 'bg-gray-500';
   };
@@ -58,7 +71,50 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries }) => {
       current.setDate(current.getDate() + 1);
     }
     
-    return days;
+  return days;
+  };
+
+  const handleDayClick = (day: number, monthIndex: number) => {
+    const clickedDate = new Date(currentYear, monthIndex, day);
+    setSelectedDate(clickedDate);
+    setDayEditorOpen(true);
+  };
+
+  const getCurrentLocationForDate = (date: Date) => {
+    const dayEntries = entries.filter(entry => {
+      if (entry.type !== 'stay') return false;
+      const entryDate = new Date(entry.date);
+      const endDate = entry.endDate || entry.date;
+      
+      return date >= entryDate && date <= endDate;
+    });
+    
+    return dayEntries.length > 0 ? dayEntries[0] : null;
+  };
+
+  const getAvailableLocationsForMonth = (monthIndex: number) => {
+    const monthEntries = getEntriesForMonth(monthIndex);
+    const locations = Array.from(new Set(
+      monthEntries.map(entry => `${entry.city}|${entry.country}`)
+    )).map(location => {
+      const [city, country] = location.split('|');
+      return { city, country };
+    });
+    return locations;
+  };
+
+  const handleSaveDay = (location: { city: string; country: string }) => {
+    if (selectedDate) {
+      onUpdateDay(selectedDate, location);
+      setDayEditorOpen(false);
+    }
+  };
+
+  const handleDeleteDay = () => {
+    if (selectedDate) {
+      onDeleteDay(selectedDate);
+      setDayEditorOpen(false);
+    }
   };
 
   return (
@@ -103,12 +159,13 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries }) => {
                     return (
                       <div 
                         key={day} 
-                        className={`h-6 w-6 flex items-center justify-center text-xs rounded-sm relative ${
+                        className={`h-6 w-6 flex items-center justify-center text-xs rounded-sm relative cursor-pointer transition-all duration-200 ${
                           dayEntries.length > 0 
-                            ? `${getCountryColor(dayEntries[0].country)} text-white font-medium` 
-                            : 'text-muted-foreground hover:bg-muted'
+                            ? `${getCountryColor(dayEntries[0].country)} text-white font-medium hover:opacity-80` 
+                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                         }`}
-                        title={dayEntries.length > 0 ? `${dayEntries[0].city}, ${dayEntries[0].country}` : ''}
+                        title={dayEntries.length > 0 ? `${dayEntries[0].city}, ${dayEntries[0].country} (Klicken zum Bearbeiten)` : 'Klicken zum Bearbeiten'}
+                        onClick={() => handleDayClick(day, monthIndex)}
                       >
                         {day}
                       </div>
@@ -135,6 +192,18 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries }) => {
           );
         })}
       </div>
+
+      {/* Day Editor Dialog */}
+      <DayEditor
+        isOpen={dayEditorOpen}
+        onClose={() => setDayEditorOpen(false)}
+        selectedDate={selectedDate}
+        currentLocation={selectedDate ? getCurrentLocationForDate(selectedDate)?.city : undefined}
+        currentCountry={selectedDate ? getCurrentLocationForDate(selectedDate)?.country : undefined}
+        availableLocations={selectedDate ? getAvailableLocationsForMonth(selectedDate.getMonth()) : []}
+        onSave={handleSaveDay}
+        onDelete={handleDeleteDay}
+      />
     </div>
   );
 };

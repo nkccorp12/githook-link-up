@@ -471,6 +471,67 @@ const TravelTracker = () => {
     });
   };
 
+  // CRUD functions for individual days
+  const updateDay = (date: Date, location: { city: string; country: string }) => {
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    // Remove existing entries for this day
+    const filteredEntries = entries.filter(entry => {
+      if (entry.type !== 'stay') return true;
+      const entryDate = new Date(entry.date);
+      const entryEndDate = entry.endDate || entry.date;
+      
+      // Check if entry overlaps with the target day
+      return !(entryDate <= dayEnd && entryEndDate >= dayStart);
+    });
+
+    // Add new entry for this day
+    const newEntry: TimelineEntry = {
+      id: crypto.randomUUID(),
+      date: new Date(date),
+      endDate: new Date(date),
+      type: 'stay',
+      country: location.country,
+      city: location.city,
+      accommodationType: 'other',
+      days: 1
+    };
+
+    setEntries([...filteredEntries, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
+    
+    toast({
+      title: "Tag aktualisiert",
+      description: `Aufenthaltsort für ${date.toLocaleDateString('de-DE')} wurde auf ${location.city}, ${location.country} gesetzt.`,
+    });
+  };
+
+  const deleteDay = (date: Date) => {
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    // Remove entries for this specific day
+    const filteredEntries = entries.filter(entry => {
+      if (entry.type !== 'stay') return true;
+      const entryDate = new Date(entry.date);
+      const entryEndDate = entry.endDate || entry.date;
+      
+      // Keep entries that don't overlap with the target day
+      return !(entryDate <= dayEnd && entryEndDate >= dayStart);
+    });
+
+    setEntries(filteredEntries);
+    
+    toast({
+      title: "Tag gelöscht",
+      description: `Aufenthaltsort für ${date.toLocaleDateString('de-DE')} wurde entfernt.`,
+    });
+  };
+
   const handleJsonPaste = () => {
     try {
       const jsonData = JSON.parse(jsonText);
@@ -681,7 +742,11 @@ const TravelTracker = () => {
             <TravelTimeline entries={entries} onDeleteEntry={deleteEntry} />
           </TabsContent>
           <TabsContent value="calendar">
-            <TravelCalendar entries={entries} />
+                <TravelCalendar 
+                  entries={entries} 
+                  onUpdateDay={updateDay}
+                  onDeleteDay={deleteDay}
+                />
           </TabsContent>
         </Tabs>
       </div>
