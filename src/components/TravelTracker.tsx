@@ -33,17 +33,50 @@ export interface TimelineEntry {
 
 const TravelTracker = () => {
   const [entries, setEntries] = useState<TimelineEntry[]>([
-    // Thailand Januar-März
+    // Thailand Januar
     {
       id: crypto.randomUUID(),
       date: new Date('2025-01-01'),
-      endDate: new Date('2025-03-11'),
+      endDate: new Date('2025-01-30'),
       type: 'stay',
       country: 'Thailand',
       city: 'Chiang Rai',
       accommodationType: 'hotel',
       comments: 'Längerer Aufenthalt zu Jahresbeginn',
-      days: 70
+      days: 30
+    },
+    // 31. Januar Chiang Rai
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-01-31'),
+      endDate: new Date('2025-01-31'),
+      type: 'stay',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      days: 1
+    },
+    // Thailand Februar
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-02-01'),
+      endDate: new Date('2025-02-28'),
+      type: 'stay',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      days: 28
+    },
+    // Thailand März bis 11.
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-03-01'),
+      endDate: new Date('2025-03-11'),
+      type: 'stay',
+      country: 'Thailand',
+      city: 'Chiang Rai',
+      accommodationType: 'hotel',
+      days: 11
     },
     // Rückflug nach Deutschland
     {
@@ -57,17 +90,17 @@ const TravelTracker = () => {
       arrival: 'Frankfurt',
       comments: 'Rückflug nach Deutschland'
     },
-    // Frankfurt Hotel März-April
+    // Frankfurt Hotel März
     {
       id: crypto.randomUUID(),
       date: new Date('2025-03-12'),
-      endDate: new Date('2025-03-31'),
+      endDate: new Date('2025-03-30'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Frankfurt',
       accommodationType: 'hotel',
       comments: 'Hotel-Aufenthalt nach Thailand-Rückkehr',
-      days: 20
+      days: 19
     },
     // 31. März Frankfurt
     {
@@ -80,17 +113,50 @@ const TravelTracker = () => {
       accommodationType: 'hotel',
       days: 1
     },
-    // Mosbach ab April
+    // Mosbach April
     {
       id: crypto.randomUUID(),
       date: new Date('2025-04-01'),
-      endDate: new Date('2025-06-12'),
+      endDate: new Date('2025-04-29'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Mosbach',
       accommodationType: 'other',
       comments: 'Standard-Aufenthalt in Mosbach',
-      days: 73
+      days: 29
+    },
+    // 30. April Mosbach
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-04-30'),
+      endDate: new Date('2025-04-30'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 1
+    },
+    // Mosbach Mai
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-05-01'),
+      endDate: new Date('2025-05-31'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 31
+    },
+    // Mosbach Juni bis 12.
+    {
+      id: crypto.randomUUID(),
+      date: new Date('2025-06-01'),
+      endDate: new Date('2025-06-12'),
+      type: 'stay',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
+      days: 12
     },
     // Berlin Flug hin
     {
@@ -180,13 +246,13 @@ const TravelTracker = () => {
     {
       id: crypto.randomUUID(),
       date: new Date('2025-06-25'),
-      endDate: new Date('2025-06-30'),
+      endDate: new Date('2025-06-29'),
       type: 'stay',
       country: 'Thailand',
       city: 'Chiang Rai',
       accommodationType: 'hotel',
       comments: 'Aufenthalt bis Rückflug',
-      days: 6
+      days: 5
     },
     // 30. Juni Chiang Rai
     {
@@ -199,19 +265,7 @@ const TravelTracker = () => {
       accommodationType: 'hotel',
       days: 1
     },
-    // 31. Januar Chiang Rai (Ergänzung)
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-01-31'),
-      endDate: new Date('2025-01-31'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      comments: '31. Januar Aufenthalt',
-      days: 1
-    },
-    // Zurück nach Deutschland (impliziert)
+    // Rückflug nach Deutschland
     {
       id: crypto.randomUUID(),
       date: new Date('2025-07-01'),
@@ -223,7 +277,7 @@ const TravelTracker = () => {
       arrival: 'Frankfurt',
       comments: 'Rückflug nach Deutschland'
     },
-    // Zurück nach Mosbach 2.-3. Juli
+    // Mosbach 2.-3. Juli
     {
       id: crypto.randomUUID(),
       date: new Date('2025-07-02'),
@@ -247,7 +301,7 @@ const TravelTracker = () => {
       comments: 'Barcelona-Trip',
       days: 4
     },
-    // Neue Juli-Daten: 8.-19. Juli Mosbach
+    // Mosbach 8.-19. Juli
     {
       id: crypto.randomUUID(),
       date: new Date('2025-07-08'),
@@ -258,7 +312,7 @@ const TravelTracker = () => {
       accommodationType: 'other',
       days: 12
     },
-    // 20.-25. Juli Amsterdam
+    // Amsterdam 20.-25. Juli
     {
       id: crypto.randomUUID(),
       date: new Date('2025-07-20'),
@@ -269,29 +323,18 @@ const TravelTracker = () => {
       accommodationType: 'other',
       days: 6
     },
-    // 26. Juli Mosbach (nur ein Tag)
+    // Mosbach 26.-29. Juli
     {
       id: crypto.randomUUID(),
       date: new Date('2025-07-26'),
-      endDate: new Date('2025-07-26'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 1
-    },
-    // 27.-29. Juli Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-27'),
       endDate: new Date('2025-07-29'),
       type: 'stay',
       country: 'Deutschland',
       city: 'Mosbach',
       accommodationType: 'other',
-      days: 3
+      days: 4
     },
-    // 30.-31. Juli Frankfurt
+    // Frankfurt 30.-31. Juli
     {
       id: crypto.randomUUID(),
       date: new Date('2025-07-30'),
