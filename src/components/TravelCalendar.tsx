@@ -119,12 +119,15 @@ const TravelCalendar: React.FC<TravelCalendarProps> = ({ entries }) => {
                 {/* Legend for this month */}
                 {monthEntries.length > 0 && (
                   <div className="space-y-1 pt-2 border-t">
-                    {monthEntries.map(entry => (
-                      <div key={entry.id} className="flex items-center gap-2 text-xs">
-                        <div className={`w-3 h-3 rounded-full ${getCountryColor(entry.country)}`}></div>
-                        <span className="text-muted-foreground">{entry.city}</span>
-                      </div>
-                    ))}
+                    {Array.from(new Set(monthEntries.map(entry => `${entry.city}|${entry.country}`))).map(cityCountry => {
+                      const [city, country] = cityCountry.split('|');
+                      return (
+                        <div key={cityCountry} className="flex items-center gap-2 text-xs">
+                          <div className={`w-3 h-3 rounded-full ${getCountryColor(country)}`}></div>
+                          <span className="text-muted-foreground">{city}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>

@@ -147,15 +147,15 @@ const TravelTracker = () => {
       accommodationType: 'other',
       days: 29
     },
-    // 30. Mai Chiang Rai
+    // 30. Mai Mosbach
     {
       id: crypto.randomUUID(),
       date: new Date('2025-05-30'),
       endDate: new Date('2025-05-30'),
       type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
+      country: 'Deutschland',
+      city: 'Mosbach',
+      accommodationType: 'other',
       days: 1
     },
     // 31. Mai Mosbach
