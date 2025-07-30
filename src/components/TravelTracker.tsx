@@ -8,6 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Plus, MapPin, Calendar, Plane, Upload, ChevronDown, FileText, PenTool } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import TravelEntryForm from "./TravelEntryForm";
 import TravelStatistics from "./TravelStatistics";
 import TravelTimeline from "./TravelTimeline";
@@ -32,391 +34,176 @@ export interface TimelineEntry {
 }
 
 const TravelTracker = () => {
-  const [entries, setEntries] = useState<TimelineEntry[]>([
-    // Thailand Januar
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-01-01'),
-      endDate: new Date('2025-01-30'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      comments: 'Längerer Aufenthalt zu Jahresbeginn',
-      days: 30
-    },
-    // 31. Januar Chiang Rai
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-01-31'),
-      endDate: new Date('2025-01-31'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      days: 1
-    },
-    // Thailand Februar
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-02-01'),
-      endDate: new Date('2025-02-28'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      days: 28
-    },
-    // Thailand März bis 11.
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-03-01'),
-      endDate: new Date('2025-03-11'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      days: 11
-    },
-    // Rückflug nach Deutschland
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-03-11'),
-      type: 'flight',
-      country: 'Deutschland',
-      city: 'Frankfurt',
-      flightNumber: 'Rückflug',
-      departure: 'Bangkok',
-      arrival: 'Frankfurt',
-      comments: 'Rückflug nach Deutschland'
-    },
-    // Frankfurt Hotel März
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-03-12'),
-      endDate: new Date('2025-03-30'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Frankfurt',
-      accommodationType: 'hotel',
-      comments: 'Hotel-Aufenthalt nach Thailand-Rückkehr',
-      days: 19
-    },
-    // 31. März Frankfurt
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-03-31'),
-      endDate: new Date('2025-03-31'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Frankfurt',
-      accommodationType: 'hotel',
-      days: 1
-    },
-    // Mosbach April
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-04-01'),
-      endDate: new Date('2025-04-29'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      comments: 'Standard-Aufenthalt in Mosbach',
-      days: 29
-    },
-    // 30. April Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-04-30'),
-      endDate: new Date('2025-04-30'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 1
-    },
-    // Mosbach Mai
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-05-01'),
-      endDate: new Date('2025-05-29'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 29
-    },
-    // 30. Mai Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-05-30'),
-      endDate: new Date('2025-05-30'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 1
-    },
-    // 31. Mai Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-05-31'),
-      endDate: new Date('2025-05-31'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 1
-    },
-    // Mosbach Juni bis 12.
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-01'),
-      endDate: new Date('2025-06-12'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 12
-    },
-    // Berlin Flug hin
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-12'),
-      type: 'flight',
-      country: 'Deutschland',
-      city: 'Berlin',
-      flightNumber: 'DE4087',
-      departure: 'Frankfurt (FRA)',
-      arrival: 'Berlin (BER)',
-      comments: '14:50-15:55'
-    },
-    // Berlin Aufenthalt
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-12'),
-      endDate: new Date('2025-06-15'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Berlin',
-      accommodationType: 'hotel',
-      comments: 'Berlin-Trip',
-      days: 3
-    },
-    // Berlin Rückflug
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-15'),
-      type: 'flight',
-      country: 'Deutschland',
-      city: 'Frankfurt',
-      flightNumber: 'DE4086',
-      departure: 'Berlin (BER)',
-      arrival: 'Frankfurt (FRA)',
-      comments: '09:00-10:10'
-    },
-    // Zurück nach Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-15'),
-      endDate: new Date('2025-06-23'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      comments: 'Zurück in Mosbach nach Berlin',
-      days: 8
-    },
-    // Thailand Flug
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-23'),
-      type: 'flight',
-      country: 'Thailand',
-      city: 'Bangkok',
-      flightNumber: 'Frankfurt → Bangkok',
-      departure: 'Frankfurt',
-      arrival: 'Bangkok',
-      comments: '22:10 CET → 14:30 (+1 Tag)'
-    },
-    // Bangkok Aufenthalt
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-24'),
-      endDate: new Date('2025-06-25'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Bangkok',
-      accommodationType: 'hotel',
-      comments: 'Hilton Garden Inn Bangkok Silom',
-      days: 2
-    },
-    // Flug nach Chiang Rai
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-25'),
-      type: 'flight',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      flightNumber: 'VZ132',
-      departure: 'Bangkok (BKK)',
-      arrival: 'Chiang Rai (CNX)',
-      comments: '13:30-14:55'
-    },
-    // Chiang Rai Aufenthalt
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-25'),
-      endDate: new Date('2025-06-29'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      comments: 'Aufenthalt bis Rückflug',
-      days: 5
-    },
-    // 30. Juni Chiang Rai
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-06-30'),
-      endDate: new Date('2025-06-30'),
-      type: 'stay',
-      country: 'Thailand',
-      city: 'Chiang Rai',
-      accommodationType: 'hotel',
-      days: 1
-    },
-    // Rückflug nach Deutschland
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-01'),
-      type: 'flight',
-      country: 'Deutschland',
-      city: 'Frankfurt',
-      flightNumber: 'Rückflug',
-      departure: 'Chiang Rai/Bangkok',
-      arrival: 'Frankfurt',
-      comments: 'Rückflug nach Deutschland'
-    },
-    // 1. Juli Mosbach
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-01'),
-      endDate: new Date('2025-07-01'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 1
-    },
-    // Mosbach 2.-3. Juli
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-02'),
-      endDate: new Date('2025-07-03'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      comments: 'Zurück in Mosbach nach Thailand',
-      days: 2
-    },
-    // Barcelona 4.-7. Juli
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-04'),
-      endDate: new Date('2025-07-07'),
-      type: 'stay',
-      country: 'Spanien',
-      city: 'Barcelona',
-      accommodationType: 'hotel',
-      comments: 'Barcelona-Trip',
-      days: 4
-    },
-    // Mosbach 8.-19. Juli
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-08'),
-      endDate: new Date('2025-07-19'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 12
-    },
-    // Amsterdam 20.-25. Juli
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-20'),
-      endDate: new Date('2025-07-25'),
-      type: 'stay',
-      country: 'Niederlande',
-      city: 'Amsterdam',
-      accommodationType: 'other',
-      days: 6
-    },
-    // Mosbach 26.-29. Juli
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-26'),
-      endDate: new Date('2025-07-29'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Mosbach',
-      accommodationType: 'other',
-      days: 4
-    },
-    // Frankfurt 30.-31. Juli
-    {
-      id: crypto.randomUUID(),
-      date: new Date('2025-07-30'),
-      endDate: new Date('2025-07-31'),
-      type: 'stay',
-      country: 'Deutschland',
-      city: 'Frankfurt',
-      accommodationType: 'other',
-      days: 2
-    },
-  ]);
+  const [entries, setEntries] = useState<TimelineEntry[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [jsonPasteDialog, setJsonPasteDialog] = useState(false);
   const [jsonText, setJsonText] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { user } = useAuth();
 
-  const addEntry = (entry: Omit<TimelineEntry, "id">) => {
+  // Load entries from Supabase on component mount
+  useEffect(() => {
+    if (user) {
+      loadEntriesFromDatabase();
+    }
+  }, [user]);
+
+  const loadEntriesFromDatabase = async () => {
+    try {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from('travel_entries')
+        .select('*')
+        .order('date', { ascending: true });
+
+      if (error) {
+        console.error('Error loading travel entries:', error);
+        toast({
+          title: "Fehler beim Laden",
+          description: "Die Reiseeinträge konnten nicht geladen werden.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Convert database entries to TimelineEntry format
+      const timelineEntries: TimelineEntry[] = data.map(entry => ({
+        id: entry.id,
+        date: new Date(entry.date),
+        endDate: entry.end_date ? new Date(entry.end_date) : undefined,
+        type: entry.type as "stay" | "flight",
+        country: entry.country,
+        city: entry.city,
+        accommodationType: entry.accommodation_type as "airbnb" | "hotel" | "friend" | "other" | undefined,
+        days: entry.days || undefined,
+        flightNumber: entry.flight_number || undefined,
+        departure: entry.departure || undefined,
+        arrival: entry.arrival || undefined,
+        comments: entry.comments || undefined
+      }));
+
+      setEntries(timelineEntries);
+    } catch (error) {
+      console.error('Error loading entries:', error);
+      toast({
+        title: "Fehler",
+        description: "Ein unerwarteter Fehler ist aufgetreten.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveEntryToDatabase = async (entry: TimelineEntry) => {
+    try {
+      const { error } = await supabase
+        .from('travel_entries')
+        .upsert({
+          id: entry.id,
+          user_id: user?.id,
+          date: entry.date.toISOString(),
+          end_date: entry.endDate?.toISOString() || null,
+          type: entry.type,
+          country: entry.country,
+          city: entry.city,
+          accommodation_type: entry.accommodationType || null,
+          days: entry.days || null,
+          flight_number: entry.flightNumber || null,
+          departure: entry.departure || null,
+          arrival: entry.arrival || null,
+          comments: entry.comments || null
+        });
+
+      if (error) {
+        console.error('Error saving entry:', error);
+        toast({
+          title: "Fehler beim Speichern",
+          description: "Der Eintrag konnte nicht gespeichert werden.",
+          variant: "destructive"
+        });
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error saving entry:', error);
+      return false;
+    }
+  };
+
+  const deleteEntryFromDatabase = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('travel_entries')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting entry:', error);
+        toast({
+          title: "Fehler beim Löschen",
+          description: "Der Eintrag konnte nicht gelöscht werden.",
+          variant: "destructive"
+        });
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error('Error deleting entry:', error);
+      return false;
+    }
+  };
+
+  const addEntry = async (entry: Omit<TimelineEntry, "id">) => {
     const newEntry: TimelineEntry = {
       ...entry,
       id: crypto.randomUUID(),
     };
-    setEntries(prev => [...prev, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
-    setShowForm(false);
+    
+    const saved = await saveEntryToDatabase(newEntry);
+    if (saved) {
+      setEntries(prev => [...prev, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
+      setShowForm(false);
+      toast({
+        title: "Eintrag gespeichert",
+        description: "Der Reise-Eintrag wurde erfolgreich gespeichert.",
+      });
+    }
   };
 
-  const deleteEntry = (id: string) => {
-    setEntries(prev => prev.filter(entry => entry.id !== id));
-    toast({
-      title: "Event gelöscht",
-      description: "Der Reise-Eintrag wurde erfolgreich entfernt.",
-    });
+  const deleteEntry = async (id: string) => {
+    const deleted = await deleteEntryFromDatabase(id);
+    if (deleted) {
+      setEntries(prev => prev.filter(entry => entry.id !== id));
+      toast({
+        title: "Event gelöscht",
+        description: "Der Reise-Eintrag wurde erfolgreich entfernt.",
+      });
+    }
   };
 
   // CRUD functions for individual days
-  const updateDay = (date: Date, location: { city: string; country: string }) => {
+  const updateDay = async (date: Date, location: { city: string; country: string }) => {
     const dayStart = new Date(date);
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(date);
     dayEnd.setHours(23, 59, 59, 999);
 
-    // Remove existing entries for this day
-    const filteredEntries = entries.filter(entry => {
-      if (entry.type !== 'stay') return true;
+    // Remove existing entries for this day from database
+    const entriesToDelete = entries.filter(entry => {
+      if (entry.type !== 'stay') return false;
       const entryDate = new Date(entry.date);
       const entryEndDate = entry.endDate || entry.date;
       
       // Check if entry overlaps with the target day
-      return !(entryDate <= dayEnd && entryEndDate >= dayStart);
+      return entryDate <= dayEnd && entryEndDate >= dayStart;
     });
+
+    // Delete from database
+    for (const entry of entriesToDelete) {
+      await deleteEntryFromDatabase(entry.id);
+    }
 
     // Add new entry for this day
     const newEntry: TimelineEntry = {
@@ -430,29 +217,48 @@ const TravelTracker = () => {
       days: 1
     };
 
-    setEntries([...filteredEntries, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
-    
-    toast({
-      title: "Tag aktualisiert",
-      description: `Aufenthaltsort für ${date.toLocaleDateString('de-DE')} wurde auf ${location.city}, ${location.country} gesetzt.`,
-    });
+    const saved = await saveEntryToDatabase(newEntry);
+    if (saved) {
+      // Update local state
+      const filteredEntries = entries.filter(entry => {
+        if (entry.type !== 'stay') return true;
+        const entryDate = new Date(entry.date);
+        const entryEndDate = entry.endDate || entry.date;
+        
+        // Check if entry overlaps with the target day
+        return !(entryDate <= dayEnd && entryEndDate >= dayStart);
+      });
+
+      setEntries([...filteredEntries, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
+      
+      toast({
+        title: "Tag aktualisiert",
+        description: `Aufenthaltsort für ${date.toLocaleDateString('de-DE')} wurde auf ${location.city}, ${location.country} gesetzt.`,
+      });
+    }
   };
 
-  const updateDayRange = (location: { city: string; country: string }, startDate: Date, endDate: Date) => {
+  const updateDayRange = async (location: { city: string; country: string }, startDate: Date, endDate: Date) => {
     // Remove existing entries that overlap with the date range
     const rangeStart = new Date(startDate);
     rangeStart.setHours(0, 0, 0, 0);
     const rangeEnd = new Date(endDate);
     rangeEnd.setHours(23, 59, 59, 999);
 
-    const filteredEntries = entries.filter(entry => {
-      if (entry.type !== 'stay') return true;
+    // Find and delete overlapping entries from database
+    const entriesToDelete = entries.filter(entry => {
+      if (entry.type !== 'stay') return false;
       const entryDate = new Date(entry.date);
       const entryEndDate = entry.endDate || entry.date;
       
       // Keep entries that don't overlap with the target range
-      return !(entryDate <= rangeEnd && entryEndDate >= rangeStart);
+      return entryDate <= rangeEnd && entryEndDate >= rangeStart;
     });
+
+    // Delete from database
+    for (const entry of entriesToDelete) {
+      await deleteEntryFromDatabase(entry.id);
+    }
 
     // Calculate the number of days
     const daysDiff = Math.ceil((rangeEnd.getTime() - rangeStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
@@ -469,21 +275,49 @@ const TravelTracker = () => {
       days: daysDiff
     };
 
-    setEntries([...filteredEntries, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
-    
-    toast({
-      title: "Zeitraum aktualisiert",
-      description: `Aufenthalt von ${startDate.toLocaleDateString('de-DE')} bis ${endDate.toLocaleDateString('de-DE')} in ${location.city}, ${location.country} eingetragen.`,
-    });
+    const saved = await saveEntryToDatabase(newEntry);
+    if (saved) {
+      // Update local state
+      const filteredEntries = entries.filter(entry => {
+        if (entry.type !== 'stay') return true;
+        const entryDate = new Date(entry.date);
+        const entryEndDate = entry.endDate || entry.date;
+        
+        // Keep entries that don't overlap with the target range
+        return !(entryDate <= rangeEnd && entryEndDate >= rangeStart);
+      });
+
+      setEntries([...filteredEntries, newEntry].sort((a, b) => a.date.getTime() - b.date.getTime()));
+      
+      toast({
+        title: "Zeitraum aktualisiert",
+        description: `Aufenthalt von ${startDate.toLocaleDateString('de-DE')} bis ${endDate.toLocaleDateString('de-DE')} in ${location.city}, ${location.country} eingetragen.`,
+      });
+    }
   };
 
-  const deleteDay = (date: Date) => {
+  const deleteDay = async (date: Date) => {
     const dayStart = new Date(date);
     dayStart.setHours(0, 0, 0, 0);
     const dayEnd = new Date(date);
     dayEnd.setHours(23, 59, 59, 999);
 
-    // Remove entries for this specific day
+    // Find entries to delete from database
+    const entriesToDelete = entries.filter(entry => {
+      if (entry.type !== 'stay') return false;
+      const entryDate = new Date(entry.date);
+      const entryEndDate = entry.endDate || entry.date;
+      
+      // Check if entry overlaps with the target day
+      return entryDate <= dayEnd && entryEndDate >= dayStart;
+    });
+
+    // Delete from database
+    for (const entry of entriesToDelete) {
+      await deleteEntryFromDatabase(entry.id);
+    }
+
+    // Update local state
     const filteredEntries = entries.filter(entry => {
       if (entry.type !== 'stay') return true;
       const entryDate = new Date(entry.date);
@@ -611,6 +445,17 @@ const TravelTracker = () => {
       accommodationType: 'other' as const
     };
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-travel p-4 md:p-8 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-foreground">Reisedaten werden geladen...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle p-4 md:p-6">
